@@ -26,10 +26,13 @@ from enit_chip_db import AVRChip, CHIP_DATABASE, find_by_name, find_by_signature
 from enit_hex_parser import IntelHex
 
 # ==============================================================================
-# Open Source Community & Sponsorship URLs (Aries Computer Solutions)
+# Open Source Community & Social Media URLs (Aries Computer Solutions)
 # ==============================================================================
 PAYPAL_ME_BASE_URL = "https://paypal.me/ariestech"
 GITHUB_REPO_URL = "https://github.com/arieslaptop/ENIT-AVR-Studio"
+WEBSITE_URL = "http://www.arieslaptop.in"
+YOUTUBE_URL = "https://www.youtube.com/harshadpatel"
+FACEBOOK_URL = "https://www.facebook.com/aries.harshadpatel"
 
 # Application Base Directory (Supports development & PyInstaller bundling)
 BASE_DIR = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -562,7 +565,7 @@ class DonateDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Support Open Source Development - Aries Computer Solutions")
         self.setModal(True)
-        self.resize(580, 430)
+        self.resize(620, 480)
         self.setStyleSheet(STYLE_SHEET)
 
         icon_path = os.path.join(BASE_DIR, "Icons", "enit_avr_studio.ico")
@@ -666,6 +669,41 @@ class DonateDialog(QDialog):
         link_layout.addWidget(btn_github)
 
         layout.addWidget(link_frame)
+
+        # Community & Social Media Links Frame
+        social_frame = QFrame()
+        social_frame.setStyleSheet("background-color: #0b0f19; border: 1px solid #1e293b; border-radius: 6px; padding: 6px 10px;")
+        soc_layout = QHBoxLayout(social_frame)
+        soc_layout.setContentsMargins(6, 4, 6, 4)
+        soc_layout.setSpacing(10)
+
+        soc_lbl = QLabel("COMMUNITY:")
+        soc_lbl.setStyleSheet("font-size: 11px; font-weight: bold; color: #38bdf8; letter-spacing: 0.5px;")
+        soc_layout.addWidget(soc_lbl)
+
+        btn_web = QPushButton("🌍 www.arieslaptop.in")
+        btn_web.setCursor(Qt.PointingHandCursor)
+        btn_web.setProperty("class", "SecondaryBtn")
+        btn_web.setStyleSheet("padding: 5px 12px; font-size: 12px; font-weight: 600; color: #38bdf8;")
+        btn_web.clicked.connect(lambda: self._open_url(WEBSITE_URL))
+        soc_layout.addWidget(btn_web)
+
+        btn_yt = QPushButton("▶ YouTube")
+        btn_yt.setCursor(Qt.PointingHandCursor)
+        btn_yt.setProperty("class", "SecondaryBtn")
+        btn_yt.setStyleSheet("padding: 5px 12px; font-size: 12px; font-weight: 600; color: #f87171;")
+        btn_yt.clicked.connect(lambda: self._open_url(YOUTUBE_URL))
+        soc_layout.addWidget(btn_yt)
+
+        btn_fb = QPushButton("📘 Facebook")
+        btn_fb.setCursor(Qt.PointingHandCursor)
+        btn_fb.setProperty("class", "SecondaryBtn")
+        btn_fb.setStyleSheet("padding: 5px 12px; font-size: 12px; font-weight: 600; color: #60a5fa;")
+        btn_fb.clicked.connect(lambda: self._open_url(FACEBOOK_URL))
+        soc_layout.addWidget(btn_fb)
+
+        soc_layout.addStretch()
+        layout.addWidget(social_frame)
 
         # Bottom Close Button
         btn_bottom_layout = QHBoxLayout()

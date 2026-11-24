@@ -7,6 +7,9 @@
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](https://python.org)
 [![GUI: PySide6](https://img.shields.io/badge/GUI-PySide6%20%2F%20Qt-orange.svg)](https://qt.io)
 [![Hardware: USBasp ISP](https://img.shields.io/badge/Hardware-USBasp%20ISP-cyan.svg)](https://fischl.de/usbasp/)
+[![Website: arieslaptop.in](https://img.shields.io/badge/Website-arieslaptop.in-00adb5.svg)](http://www.arieslaptop.in)
+[![YouTube](https://img.shields.io/badge/YouTube-Harshad%20Patel-FF0000.svg)](https://www.youtube.com/harshadpatel)
+[![Facebook](https://img.shields.io/badge/Facebook-aries.harshadpatel-1877F2.svg)](https://www.facebook.com/aries.harshadpatel)
 [![Donate: PayPal](https://img.shields.io/badge/Sponsor-PayPal.Me-0079C1.svg)](https://paypal.me/ariestech)
 
 ---
@@ -108,7 +111,7 @@ Your sponsorships help acquire test hardware, fund new microcontroller protocol 
 ## 🛠️ Quick Start & Installation
 
 ### Option 1: Standalone Windows Executable (No Python Required)
-1. Download the latest `ENIT_AVR_Studio.exe` from the [Releases](https://github.com/arieslaptop/ENIT-AVR-Studio/releases) page.
+1. Download the latest `ENIT_AVR_Studio.exe` or `ENIT_AVR_Studio_v1.0_Windows_x64.zip` from the [Releases](https://github.com/arieslaptop/ENIT-AVR-Studio/releases) page.
 2. Ensure your USBasp programmer has the `libusb-win32` driver installed (use [Zadig](https://zadig.akeo.ie/) if needed).
 3. Double-click `ENIT_AVR_Studio.exe` to launch immediately.
 
@@ -149,6 +152,35 @@ python enit_avr_cli.py -c ATmega328P -wf myFirmware.hex -we myEEPROM.eep -wF FF:
 
 ---
 
+## 📸 Application Screenshots & UI Showcase
+
+<p align="center">
+  <img width="95%" alt="Main Memory Grid & Flashing Controls" src="https://github.com/user-attachments/assets/2a705dd7-2a40-4b87-9e4d-d3043fcb88f5" /><br/>
+  <em>Figure 1: Main Application Workspace, Live HEX Memory Grid & High-Speed Hardware Controls</em>
+</p>
+
+<p align="center">
+  <img width="95%" alt="Fuse Bits Configuration & Lock Settings" src="https://github.com/user-attachments/assets/cb3a921d-e870-4517-9cae-52a59722d673" /><br/>
+  <em>Figure 2: Visual Fuse & Lock Bits Manager with Safety Verification</em>
+</p>
+
+<p align="center">
+  <img width="95%" alt="Interactive AVR Clock Generator" src="https://github.com/user-attachments/assets/6b6cf7df-96a3-4ae4-8d3c-3295434191ed" /><br/>
+  <em>Figure 3: Interactive AVR Clock Generator & Frequency Presets</em>
+</p>
+
+<p align="center">
+  <img width="95%" alt="Interactive ZIF Socket Placement HUD" src="https://github.com/user-attachments/assets/2cbd9c7c-a1ed-4bba-a6fb-075aad91f6c6" /><br/>
+  <em>Figure 4: ZIF Socket Placement Guide & DIP IC Pin Alignment</em>
+</p>
+
+<p align="center">
+  <img width="95%" alt="Open Source Support & Sponsorship Dialog" src="https://github.com/user-attachments/assets/c2eeb7ce-ae34-4cc1-b44f-814bf35fd3d2" /><br/>
+  <em>Figure 5: Support Open Source Development & Community Contribution Modal</em>
+</p>
+
+---
+
 ## 📁 Repository Structure
 
 ```text
@@ -171,6 +203,7 @@ ENIT-AVR-Studio/
 ├── enit_chip_db.py             # Chip signatures, memory configurations & fuse models
 ├── enit_hex_parser.py          # Fast Intel HEX & Motorola S-record parser
 ├── enit_avr_cli.py             # Production CLI automation tool
+├── push_to_github.bat          # One-click repository push helper
 ├── run_enit_avr_studio.bat     # Windows one-click launcher
 ├── DESIGN.md                   # Google Stitch Design System documentation
 ├── APPLICATION_ARCHITECTURE.md # System architecture specification
@@ -178,11 +211,20 @@ ENIT-AVR-Studio/
 ├── TESTING_REPORT.md           # Hardware flash verification logs (ATmega328P 100% pass)
 └── README.md                   # Project overview & hardware schematic guide
 ```
-<img width="1362" height="1061" alt="Untitled" src="https://github.com/user-attachments/assets/2a705dd7-2a40-4b87-9e4d-d3043fcb88f5" />
-<img width="1378" height="859" alt="soft" src="https://github.com/user-attachments/assets/cb3a921d-e870-4517-9cae-52a59722d673" />
-<img width="1378" height="859" alt="AiShot20261124153008" src="https://github.com/user-attachments/assets/6b6cf7df-96a3-4ae4-8d3c-3295434191ed" />
-<img width="1378" height="859" alt="AiShot20261124152949" src="https://github.com/user-attachments/assets/2cbd9c7c-a1ed-4bba-a6fb-075aad91f6c6" />
-<img width="1378" height="859" alt="2" src="https://github.com/user-attachments/assets/c2eeb7ce-ae34-4cc1-b44f-814bf35fd3d2" />
+
+---
+
+## 🌐 Connect & Social Media (Aries Computer Solutions)
+
+| Platform | Official Link / Handle | Details |
+|:---|:---|:---|
+| 🏢 **Company** | **Aries Computer Solutions** | Professional IT solutions, hardware diagnostics & tools |
+| 👤 **Founder & Engineer** | **Harshad Patel** | System Architect & Hardware Engineer, India |
+| 🌍 **Official Website** | [www.arieslaptop.in](http://www.arieslaptop.in) | Company portal, services & products |
+| 📺 **YouTube Channel** | [youtube.com/harshadpatel](https://www.youtube.com/harshadpatel) | Video guides, technical tutorials & repair demos |
+| 📘 **Facebook** | [facebook.com/aries.harshadpatel](https://www.facebook.com/aries.harshadpatel) | Official community page & updates |
+| 🐙 **GitHub** | [github.com/arieslaptop](https://github.com/arieslaptop) | Open-source software repositories |
+| 💖 **PayPal Sponsorship** | [paypal.me/ariestech](https://paypal.me/ariestech) | Direct community development contributions |
 
 ---
 
@@ -192,5 +234,4 @@ Copyright &copy; 2026 **Aries Computer Solutions**
 Author: **Harshad Patel, India**  
 All Rights Reserved.
 
-Open source software distributed under the MIT License. Contributions and pull requests are warmly welcomed!
-
+Open source software distributed under the MIT License. Contributions, feedback, and pull requests are warmly welcomed!
