@@ -25,3 +25,7 @@ Desktop.ini
 *.log
 temp/
 scratch/
+
+# Release binaries
+Release/
+
