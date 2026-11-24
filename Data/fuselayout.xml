@@ -1,0 +1,162 @@
+<FUSELAYOUTS>
+
+	<LOWFUSE>
+		
+		<LAYOUT id="1" comment="For ATmega8,ATmega16,ATmega32">
+			<BIT position="0" name="CKSEL0" details="Select Clock source" default="1" />
+			<BIT position="1" name="CKSEL1" details="Select Clock source" default="0" />
+			<BIT position="2" name="CKSEL2" details="Select Clock source" default="0" />
+			<BIT position="3" name="CKSEL3" details="Select Clock source" default="0" />
+			<BIT position="4" name="SUT0" details="Select start-up time" default="0" />
+			<BIT position="5" name="SUT1" details="Select start-up time" default="1" />
+			<BIT position="6" name="BODEN" details="Brown out detector enable" default="1" />
+			<BIT position="7" name="BODLEVEL" details="Brown out detector trigger level" default="1" />
+		</LAYOUT>
+		
+		<LAYOUT id="2" comment="For ATmega48/88/168[V]/328/328P">
+			<BIT position="0" name="CKSEL0" details="Select Clock source" default="0" />
+			<BIT position="1" name="CKSEL1" details="Select Clock source" default="1" />
+			<BIT position="2" name="CKSEL2" details="Select Clock source" default="0" />
+			<BIT position="3" name="CKSEL3" details="Select Clock source" default="0" />
+			<BIT position="4" name="SUT0" details="Select start-up time" default="0" />
+			<BIT position="5" name="SUT1" details="Select start-up time" default="1" />
+			<BIT position="6" name="CKOUT" details="Clock output" default="1" />
+			<BIT position="7" name="CKDIV8" details="Divide clock by 8" default="0" />
+		</LAYOUT>
+		
+		<LAYOUT id="3" comment="For AT90USB1286">
+            <BIT position="0" name="CKSEL0" details="Select Clock source" default="0" />
+            <BIT position="1" name="CKSEL1" details="Select Clock source" default="1" />
+            <BIT position="2" name="CKSEL2" details="Select Clock source" default="1" />
+            <BIT position="3" name="CKSEL3" details="Select Clock source" default="1" />
+            <BIT position="4" name="SUT0" details="Select start-up time" default="1" />
+            <BIT position="5" name="SUT1" details="Select start-up time" default="0" />
+            <BIT position="6" name="CKOUT" details="Clock output" default="1" />
+            <BIT position="7" name="CKDIV8" details="Divide clock by 8" default="0" />
+        </LAYOUT>
+	
+	</LOWFUSE>
+	
+	<HIGHFUSE>
+		
+		<LAYOUT id="1" comment="For ATmega8">
+			<BIT position="0" name="BOOTRST" details="Select Reset Vector" default="1" />
+			<BIT position="1" name="BOOTSZ0" details="Select Boot Size" default="0" />
+			<BIT position="2" name="BOOTSZ1" details="Select Boot Size" default="0" />
+			<BIT position="3" name="EESAVE" details="EEPROM memory is preserved through the Chip Erase" default="1" />
+			<BIT position="4" name="CKOPT" details="Oscillator options" default="1" />
+			<BIT position="5" name="SPIEN" details="Enable Serial Program and Data Downloading" default="0" />
+			<BIT position="6" name="WDTON" details="WDT always on" default="1" />
+			<BIT position="7" name="RSTDISBL" details="Select if PC6 is I/O pin or RESET pin" default="1" />
+		</LAYOUT>
+	
+		<LAYOUT id="2" comment="For ATmega16,ATmega32">
+			<BIT position="0" name="BOOTRST" details="Select Reset Vector" default="1" />
+			<BIT position="1" name="BOOTSZ0" details="Select Boot Size" default="0" />
+			<BIT position="2" name="BOOTSZ1" details="Select Boot Size" default="0" />
+			<BIT position="3" name="EESAVE" details="EEPROM memory is preserved through the Chip Erase" default="1" />
+			<BIT position="4" name="CKOPT" details="Oscillator options" default="1" />
+			<BIT position="5" name="SPIEN" details="Enable Serial Program and Data Downloading" default="0" />
+			<BIT position="6" name="JTAGEN" details="Enable JTAG" default="0" />
+			<BIT position="7" name="OCDEN" details="Enable OCD" default="1" />
+		</LAYOUT>
+		
+		<LAYOUT id="3" comment="For ATmega48/88/168[V]">
+			<BIT position="0" name="BODLEVEL0" details="Brown-out Detector trigger level" default="1" />
+			<BIT position="1" name="BODLEVEL1" details="Brown-out Detector trigger level" default="1" />
+			<BIT position="2" name="BODLEVEL2" details="Brown-out Detector trigger level" default="1" />
+			<BIT position="3" name="EESAVE" details="EEPROM memory is preserved through the Chip Erase" default="1" />
+			<BIT position="4" name="WDTON" details="Watchdog Timer Always On" default="1" />
+			<BIT position="5" name="SPIEN" details="Enable Serial Program and Data Downloading" default="0" />
+			<BIT position="6" name="DWEN" details="debugWIRE Enable" default="1" />
+			<BIT position="7" name="RSTDISBL" details="External Reset Disable" default="1" />
+		</LAYOUT>
+		
+		<LAYOUT id="4" comment="For ATmega640,ATmega1280,ATmega1281,ATmega2560,ATmega2561">
+			<BIT position="0" name="BOOTRST" details="Select Reset Vector" default="1" />
+			<BIT position="1" name="BOOTSZ0" details="Select Boot Size" default="0" />
+			<BIT position="2" name="BOOTSZ1" details="Select Boot Size" default="0" />
+			<BIT position="3" name="EESAVE" details="EEPROM memory is preserved through the Chip Erase" default="1" />
+			<BIT position="4" name="WDTON" details="Watchdog Timer Always On" default="1" />
+			<BIT position="5" name="SPIEN" details="Enable Serial Program and Data Downloading" default="0" />
+			<BIT position="6" name="JTAGEN" details="Enable JTAG" default="0" />
+			<BIT position="7" name="OCDEN" details="Enable OCD" default="1" />
+		</LAYOUT>
+		
+		<LAYOUT id="5" comment="For ATmega328[P]">
+			<BIT position="0" name="BOOTRST" details="Select Reset Vector" default="1" />
+			<BIT position="1" name="BOOTSZ0" details="Select Boot Size" default="0" />
+			<BIT position="2" name="BOOTSZ1" details="Select Boot Size" default="0" />
+			<BIT position="3" name="EESAVE" details="EEPROM memory is preserved through the Chip Erase" default="1" />
+			<BIT position="4" name="WDTON" details="Watchdog Timer Always On" default="1" />
+			<BIT position="5" name="SPIEN" details="Enable Serial Program and Data Downloading" default="0" />
+			<BIT position="6" name="DWEN" details="debugWIRE Enable" default="1" />
+			<BIT position="7" name="RSTDISBL" details="External Reset Disable" default="1" />
+		</LAYOUT>
+	
+	</HIGHFUSE>
+	
+
+	
+	<EXTFUSE>
+		
+		<LAYOUT id="1" comment="For ATmega48">
+			<BIT position="0" name="SELFPRGEN" details="Self Programming Enable" default="1" />
+			<BIT position="1" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="2" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="3" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="4" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="5" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="6" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="7" name="UNIMPLEMENTED" details="---" default="1" />
+		</LAYOUT>
+		
+		<LAYOUT id="2" comment="For ATmega88/ATmega168">
+			<BIT position="0" name="BOOTRST" details="Select Reset Vector" default="1" />
+			<BIT position="1" name="BOOTSZ0" details="Select Boot Size" default="0" />
+			<BIT position="2" name="BOOTSZ0" details="Select Boot Size" default="0" />
+			<BIT position="3" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="4" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="5" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="6" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="7" name="UNIMPLEMENTED" details="---" default="1" />
+		</LAYOUT>
+		
+		<LAYOUT id="3" comment="For ATmega128">
+			<BIT position="0" name="WDTON" details="Watchdog Timer always on" default="1" />
+			<BIT position="1" name="M103C" details="ATmega103 compatibility mode" default="0" />
+			<BIT position="2" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="3" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="4" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="5" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="6" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="7" name="UNIMPLEMENTED" details="---" default="1" />
+		</LAYOUT>
+		
+		<LAYOUT id="4" comment="For ATmega640,ATmega1280,ATmega1281,ATmega2560,ATmega2561, ATmega328[P]">
+			<BIT position="0" name="BODLEVEL0" details="Brown-out Detector trigger level" default="1" />
+			<BIT position="1" name="BODLEVEL1" details="Brown-out Detector trigger level" default="1" />
+			<BIT position="2" name="BODLEVEL2" details="Brown-out Detector trigger level" default="1" />
+			<BIT position="3" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="4" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="5" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="6" name="UNIMPLEMENTED" details="---" default="1" />
+			<BIT position="7" name="UNIMPLEMENTED" details="---" default="1" />
+		</LAYOUT>
+		
+		<LAYOUT id="5" comment="For AT90USBxxxx">
+            <BIT position="0" name="BODLEVEL0" details="Brown-out Detector trigger level" default="1" />
+            <BIT position="1" name="BODLEVEL1" details="Brown-out Detector trigger level" default="1" />
+            <BIT position="2" name="BODLEVEL2" details="Brown-out Detector trigger level" default="0" />
+            <BIT position="3" name="HWBE" details="Hardware Boot Enable" default="0" />
+            <BIT position="4" name="UNIMPLEMENTED" details="---" default="1" />
+            <BIT position="5" name="UNIMPLEMENTED" details="---" default="1" />
+            <BIT position="6" name="UNIMPLEMENTED" details="---" default="1" />
+            <BIT position="7" name="UNIMPLEMENTED" details="---" default="1" />
+        </LAYOUT>
+		
+		
+	
+	</EXTFUSE>
+	
+</FUSELAYOUTS>

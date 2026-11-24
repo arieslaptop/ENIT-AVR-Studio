@@ -1,0 +1,88 @@
+<clock>
+<clocksystem id ="1">
+	
+	<type name="External Clock" image="external_ck_osc.png" help="external_clock.html" cksel="0000">
+	
+		<startuptime details="Start-up Time from Power-down and Power-save 6CK, Additional Delay from Reset 0 (Recommended when BOD is enabled)" sut="00" />		
+		<startuptime details="Start-up Time from Power-down and Power-save 6CK, Additional Delay from Reset 4.1ms (Fast rising power)" sut="01" />		
+		<startuptime details="Start-up Time from Power-down and Power-save 6CK, Additional Delay from Reset 65ms (Slow rising power)" sut="10" />		
+		<startuptime details="Reserved" sut="11" />
+	
+		<ckopt  details="Internal 36pF capacitor between XTAL1 and GND disabled" value ="1" />
+		<ckopt  details="Internal 36pF capacitor between XTAL1 and GND enabled" value ="0" />
+		
+	</type>
+	
+	<type name="Calibrated Internal RC Oscillator" option="Nominal Frequency" image="internal_rc_osc.png" help="calibrated_internal_rc.html">
+		
+		<option details="1 MHz" cksel="0001" default="yes" />
+		<option details="2 MHz" cksel="0010" />
+		<option details="4 MHz" cksel="0011" />
+		<option details="8 MHz" cksel="0100" />
+		
+		<startuptime details="Start-up Time from Power-down and Power-save 6CK, Additional Delay from Reset 0 (Recommended when BOD is enabled)" sut="00" />		
+		<startuptime details="Start-up Time from Power-down and Power-save 6CK, Additional Delay from Reset 4.1ms (Fast rising power)" sut="01" />
+		<startuptime details="Start-up Time from Power-down and Power-save 6CK, Additional Delay from Reset 65ms (Slow rising power)" sut="10" />
+		<startuptime details="Reserved" sut="11" />
+		
+		<ckopt  details="NO Options" value ="1" />
+		
+	</type>
+	
+	<type name="External RC Oscillator" option="Frequency Range" image="external_rc_osc.png" help="external_rc.html">
+		
+		<option details="0.1-0.9 MHz" cksel="0101" />
+		<option details="0.9-3.0 MHz" cksel="0110" />
+		<option details="3.0-9.0 MHz" cksel="0111" />
+		<option details="8.0-12.0 MHz" cksel="1000" />
+		
+		<startuptime details="Start-up Time from Power-down and Power-save 18CK, Additional Delay from Reset 0 (Recommended when BOD is enabled)" sut="00" />		
+		<startuptime details="Start-up Time from Power-down and Power-save 18CK, Additional Delay from Reset 4.1ms (Fast rising power)" sut="01" />
+		<startuptime details="Start-up Time from Power-down and Power-save 18CK, Additional Delay from Reset 65ms (Slow rising power)" sut="10" />
+		<startuptime details="Start-up Time from Power-down and Power-save 6CK, Additional Delay from Reset 4.1ms (Fast Rising, BOD Enabled)" sut="11" />
+	
+		<ckopt  details="Internal 36pF capacitor between XTAL1 and GND disabled" value ="1" />
+		<ckopt  details="Internal 36pF capacitor between XTAL1 and GND enabled" value ="0" />
+			
+	</type>
+	
+	<type name="External Low Frequency Crystal(32.768KHz)" image="external_low_frequency.png" help="external_low_freq.html" cksel="1001">
+		
+		<startuptime details="Start-up Time from Power-down and Power-save 1K CK, Additional Delay from Reset 4.1 (Fast rising, BOD is enabled)" sut="00" />		
+		<startuptime details="Start-up Time from Power-down and Power-save 1K CK, Additional Delay from Reset 65ms (Slow rising power)" sut="01" />
+		<startuptime details="Start-up Time from Power-down and Power-save 32K CK, Additional Delay from Reset 65ms (Stable frequency at start-up)" sut="10" />
+		<startuptime details="Reserved" sut="11" />
+	
+		<ckopt  details="Internal 36pF capacitor on XTAL1 and XTAL2 disabled" value ="1" />
+		<ckopt  details="Internal 36pF capacitor on XTAL1 and XTAL2 enabled" value ="0" />
+			
+		
+	</type>
+	
+	<type name="External Crystal/Ceramic Resonator" option="Frequency Range" image="external_crystal.png" help="external_crystal.html">
+	
+		<option details="0.4-0.9MHz" cksel="101X" />
+		<option details="0.9-3.0MHz" cksel="110X" />
+		<option details="3.0-8.0MHz" cksel="111X" />
+		<option details="1MHz and Above (Select Full R/R Swing in Clock Option)" cksel="111X" />
+		
+		<startuptime details="Start-up Time from Power-down and Power-save 258CK, Additional Delay from Reset 4.1ms" sut="00" cksel0="0" />		
+		<startuptime details="Start-up Time from Power-down and Power-save 258CK, Additional Delay from Reset 65ms" sut="01" cksel0="0" />
+		<startuptime details="Start-up Time from Power-down and Power-save 1K CK, Additional Delay from Reset 0ms" sut="10" cksel0="0" />
+		<startuptime details="Start-up Time from Power-down and Power-save 1K CK, Additional Delay from Reset 4.1ms" sut="11" cksel0="0" />
+	
+		<startuptime details="Start-up Time from Power-down and Power-save 1K CK, Additional Delay from Reset 65ms" sut="00" cksel0="1" />		
+		<startuptime details="Start-up Time from Power-down and Power-save 16K CK, Additional Delay from Reset 0ms" sut="01" cksel0="1" />
+		<startuptime details="Start-up Time from Power-down and Power-save 16K CK, Additional Delay from Reset 4.1ms" sut="10" cksel0="1" />
+		<startuptime details="Start-up Time from Power-down and Power-save 16K CK, Additional Delay from Reset 65ms" sut="11" cksel0="1" />
+	
+	
+		<ckopt  details="Limited Swing (for xtal in range of 1-8MHz)" value ="1" help="external_crystal_ckopt.htm" />
+		<ckopt  details="Full R/R Swing (for xtal greater than 1MHz)" value ="0" help="external_crystal_ckopt.htm" />
+			
+		
+	</type>
+	
+
+</clocksystem>
+</clock>
