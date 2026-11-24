@@ -3,7 +3,7 @@
 > **Professional Microcontroller Programmer & Hardware Diagnostic Platform**  
 > **Copyright &copy; 2026 Aries Computer Solutions &bull; Harshad Patel, India. All Rights Reserved.**
 
-[![Platform: Windows x64](https://img.shields.io/badge/Platform-Windows%20x64-blue.svg)](https://github.com/ENIT/ENIT-AVR-Studio)
+[![Platform: Windows x64](https://img.shields.io/badge/Platform-Windows%20x64-blue.svg)](https://github.com/arieslaptop/ENIT-AVR-Studio)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](https://python.org)
 [![GUI: PySide6](https://img.shields.io/badge/GUI-PySide6%20%2F%20Qt-orange.svg)](https://qt.io)
 [![Hardware: USBasp ISP](https://img.shields.io/badge/Hardware-USBasp%20ISP-cyan.svg)](https://fischl.de/usbasp/)
@@ -101,21 +101,21 @@ Your sponsorships help acquire test hardware, fund new microcontroller protocol 
 - 🚀 **[$20 USD Sponsorship](https://paypal.me/ariestech/20USD)**: Sponsor new AVR microcontroller sample chips and test adapters.
 - ✨ **[Custom Sponsorship Amount](https://paypal.me/ariestech)**: Any contribution via PayPal.Me is deeply appreciated!
 
-**GitHub Repository**: [https://github.com/ENIT/ENIT-AVR-Studio](https://github.com/ENIT/ENIT-AVR-Studio)
+**GitHub Repository**: [https://github.com/arieslaptop/ENIT-AVR-Studio](https://github.com/arieslaptop/ENIT-AVR-Studio)
 
 ---
 
 ## 🛠️ Quick Start & Installation
 
 ### Option 1: Standalone Windows Executable (No Python Required)
-1. Download the latest `ENIT_AVR_Studio.exe` from the [Releases](https://github.com/ENIT/ENIT-AVR-Studio/releases) page.
+1. Download the latest `ENIT_AVR_Studio.exe` from the [Releases](https://github.com/arieslaptop/ENIT-AVR-Studio/releases) page.
 2. Ensure your USBasp programmer has the `libusb-win32` driver installed (use [Zadig](https://zadig.akeo.ie/) if needed).
 3. Double-click `ENIT_AVR_Studio.exe` to launch immediately.
 
 ### Option 2: Running from Source (Python 3.10+)
 ```powershell
 # 1. Clone repository
-git clone https://github.com/ENIT/ENIT-AVR-Studio.git
+git clone https://github.com/arieslaptop/ENIT-AVR-Studio.git
 cd ENIT-AVR-Studio
 
 # 2. Install dependencies
@@ -188,3 +188,4 @@ Author: **Harshad Patel, India**
 All Rights Reserved.
 
 Open source software distributed under the MIT License. Contributions and pull requests are warmly welcomed!
+
