@@ -29,7 +29,7 @@ from enit_hex_parser import IntelHex
 # Open Source Community & Sponsorship URLs (Aries Computer Solutions)
 # ==============================================================================
 PAYPAL_ME_BASE_URL = "https://paypal.me/ariestech"
-GITHUB_REPO_URL = "https://github.com/ENIT"
+GITHUB_REPO_URL = "https://github.com/arieslaptop/ENIT-AVR-Studio"
 
 # Application Base Directory (Supports development & PyInstaller bundling)
 BASE_DIR = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
