@@ -178,6 +178,11 @@ ENIT-AVR-Studio/
 ├── TESTING_REPORT.md           # Hardware flash verification logs (ATmega328P 100% pass)
 └── README.md                   # Project overview & hardware schematic guide
 ```
+<img width="1362" height="1061" alt="Untitled" src="https://github.com/user-attachments/assets/2a705dd7-2a40-4b87-9e4d-d3043fcb88f5" />
+<img width="1378" height="859" alt="soft" src="https://github.com/user-attachments/assets/cb3a921d-e870-4517-9cae-52a59722d673" />
+<img width="1378" height="859" alt="AiShot20261124153008" src="https://github.com/user-attachments/assets/6b6cf7df-96a3-4ae4-8d3c-3295434191ed" />
+<img width="1378" height="859" alt="AiShot20261124152949" src="https://github.com/user-attachments/assets/2cbd9c7c-a1ed-4bba-a6fb-075aad91f6c6" />
+<img width="1378" height="859" alt="2" src="https://github.com/user-attachments/assets/c2eeb7ce-ae34-4cc1-b44f-814bf35fd3d2" />
 
 ---
 
