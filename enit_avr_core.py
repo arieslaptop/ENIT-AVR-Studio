@@ -362,16 +362,21 @@ class USBaspProgrammer:
             upper_addr = address >> 16
             if upper_addr != last_upper:
                 buf = (ctypes.c_char * 4)()
-                self.lib.usb_control_msg(self.handle, 0xC0, USBASP_FUNC_SETLONGADDRESS, upper_addr, 0, buf, 0, 1000)
+                self.lib.usb_control_msg(self.handle, 0xC0, USBASP_FUNC_SETLONGADDRESS, address & 0xFFFF, upper_addr, buf, 0, 1000)
                 last_upper = upper_addr
 
             rx_buf = (ctypes.c_char * chunk_len)()
-            res = self.lib.usb_control_msg(
-                self.handle, 0xC0, USBASP_FUNC_READFLASH,
-                address & 0xFFFF, 0, rx_buf, chunk_len, 2000
-            )
+            res = -1
+            for _attempt in range(2):
+                res = self.lib.usb_control_msg(
+                    self.handle, 0xC0, USBASP_FUNC_READFLASH,
+                    address & 0xFFFF, 0, rx_buf, chunk_len, 5000
+                )
+                if res >= 0:
+                    break
+                time.sleep(0.02)
             if res < 0:
-                raise IOError(f"Flash read failed at address 0x{address:06X}")
+                raise IOError(f"Flash read failed at address 0x{address:06X} (err={res})")
 
             buffer.extend(rx_buf.raw[:chunk_len])
             address += chunk_len
@@ -413,6 +418,14 @@ class USBaspProgrammer:
         total_pages = (total_size + page_size - 1) // page_size
         self.log(f"Programming Flash memory ({total_size} bytes in {total_pages} pages, Page: {page_size}B)...")
 
+        # Determine last non-blank page: never skip middle blank gaps so USBasp
+        # sequential prog_address stays 100% aligned across all USBasp firmware clones.
+        last_active_page = -1
+        for p in range(total_pages):
+            p_addr = p * page_size
+            if any(b != 0xFF for b in data[p_addr:p_addr + page_size]):
+                last_active_page = p
+
         t_start = time.time()
         address = 0
         last_upper = -1
@@ -425,8 +438,8 @@ class USBaspProgrammer:
             if len(chunk) < page_size:
                 chunk = chunk + b'\xFF' * (page_size - len(chunk))
 
-            # Smart page skipping for blank 0xFF pages
-            if skip_blank_pages and all(b == 0xFF for b in chunk):
+            # Skip only trailing blank 0xFF pages after the last active page
+            if skip_blank_pages and p > last_active_page:
                 pages_skipped += 1
                 address += page_size
                 if progress_callback:
@@ -436,7 +449,7 @@ class USBaspProgrammer:
             upper_addr = addr >> 16
             if upper_addr != last_upper:
                 buf = (ctypes.c_char * 4)()
-                self.lib.usb_control_msg(self.handle, 0xC0, USBASP_FUNC_SETLONGADDRESS, upper_addr, 0, buf, 0, 1000)
+                self.lib.usb_control_msg(self.handle, 0xC0, USBASP_FUNC_SETLONGADDRESS, addr & 0xFFFF, upper_addr, buf, 0, 1000)
                 last_upper = upper_addr
 
             tx_buf = ctypes.create_string_buffer(bytes(chunk), page_size)
@@ -444,10 +457,10 @@ class USBaspProgrammer:
             wIndex = page_size | (3 << 8)
             res = self.lib.usb_control_msg(
                 self.handle, 0x40, USBASP_FUNC_WRITEFLASH,
-                addr & 0xFFFF, wIndex, tx_buf, page_size, 2000
+                addr & 0xFFFF, wIndex, tx_buf, page_size, 5000
             )
             if res < 0:
-                self.log(f"ERROR: Flash write failed at page {p} (address 0x{addr:06X})")
+                self.log(f"ERROR: Flash write failed at page {p} (address 0x{addr:06X}, err={res})")
                 return False
 
             pages_written += 1
