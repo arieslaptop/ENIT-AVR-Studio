@@ -799,7 +799,24 @@ class WorkerThread(QThread):
         try:
             self.prog.log_cb = lambda msg: self.log_signal.emit(msg)
 
+            # Ensure USBasp programmer dongle is open
+            if not self.prog.handle:
+                if not self.prog.open():
+                    self.finished_signal.emit(False, "USBasp hardware not found! Check USB cable and drivers.")
+                    return
+
+            # Always perform a fresh ISP target sync for every operation so hot-swapped
+            # ICs in a ZIF socket work immediately without manual Disconnect/Connect.
+            if self.action != "connect":
+                if self.prog.is_connected:
+                    self.prog.disconnect_target()
+                if not self.prog.connect_target():
+                    self.finished_signal.emit(False, "Target IC not detected / ISP sync failed! Check IC in socket.")
+                    return
+
             if self.action == "connect":
+                if self.prog.is_connected:
+                    self.prog.disconnect_target()
                 success = self.prog.connect_target()
                 if success:
                     chip = self.prog.autodetect_chip()
@@ -964,6 +981,14 @@ class WorkerThread(QThread):
         except Exception as ex:
             self.log_signal.emit(f"Worker Error: {str(ex)}")
             self.finished_signal.emit(False, str(ex))
+        finally:
+            # Release RESET safely after every operation so ICs can be hot-swapped
+            # in a ZIF socket while keeping the USBasp dongle open and ready.
+            try:
+                if self.prog.is_connected:
+                    self.prog.disconnect_target()
+            except Exception:
+                pass
 
 
 class EnitAVRStudio(QMainWindow):
@@ -1562,13 +1587,17 @@ class EnitAVRStudio(QMainWindow):
 
     # Hardware Actions
     def on_connect_clicked(self):
-        if not self.programmer.is_connected:
+        if self.programmer.handle is None:
             self._run_worker("connect", "Connecting to target MCU...")
         else:
             self.programmer.disconnect_target()
             self.programmer.close()
             self.btn_connect.setText("Connect USBasp")
             self.lbl_status.setText("Programmer disconnected.")
+            if hasattr(self, 'lbl_status_led'):
+                self.lbl_status_led.setStyleSheet("color: #94a3b8; font-size: 13px; font-weight: bold;")
+            if hasattr(self, 'lbl_hardware_summary'):
+                self.lbl_hardware_summary.setText("DISCONNECTED • Click 'Connect USBasp' to initialize hardware session")
 
     def on_autodetect_clicked(self):
         self._run_worker("read_signature", "Reading signature & detecting chip...")
@@ -1866,7 +1895,7 @@ class EnitAVRStudio(QMainWindow):
                 self.lbl_telem_status.setText(f"FAILED: {msg}")
                 if "MISMATCH" in msg.upper() or "VERIFY FAILED" in msg.upper():
                     QMessageBox.critical(self, "Verification Mismatch Detected", msg)
-            if self.programmer.is_connected:
+            if self.programmer.handle is not None:
                 self.btn_connect.setText("Disconnect")
                 if self.programmer.active_chip:
                     self.combo_chips.blockSignals(True)
@@ -1877,8 +1906,9 @@ class EnitAVRStudio(QMainWindow):
                     self.lbl_status_led.setStyleSheet("color: #10b981; font-size: 13px; font-weight: bold;")
                 if hasattr(self, 'lbl_hardware_summary') and self.active_chip:
                     sig = f"0x{self.active_chip.signature[0]:02X} 0x{self.active_chip.signature[1]:02X} 0x{self.active_chip.signature[2]:02X}"
-                    self.lbl_hardware_summary.setText(f"DEVICE READY • USBasp Synced • VTarget: 5.0V • Target: {self.active_chip.name} ({sig})")
+                    self.lbl_hardware_summary.setText(f"USBasp READY • VTarget: 5.0V • Target: {self.active_chip.name} ({sig})")
             else:
+                self.btn_connect.setText("Connect USBasp")
                 if hasattr(self, 'lbl_status_led'):
                     self.lbl_status_led.setStyleSheet("color: #94a3b8; font-size: 13px; font-weight: bold;")
                 if hasattr(self, 'lbl_hardware_summary'):
