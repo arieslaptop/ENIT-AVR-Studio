@@ -183,28 +183,33 @@ python enit_avr_cli.py -c ATmega328P -wf myFirmware.hex -we myEEPROM.eep -wF FF:
 ## 📸 Application Screenshots & UI Showcase
 
 <p align="center">
-  <img width="95%" alt="Main Memory Grid & Flashing Controls" src="https://github.com/user-attachments/assets/2a705dd7-2a40-4b87-9e4d-d3043fcb88f5" /><br/>
-  <em>Figure 1: Main Application Workspace, Live HEX Memory Grid & High-Speed Hardware Controls</em>
+  <img width="95%" alt="Main Application Workspace & Live HEX Memory Grid" src="Images/Screenshots/01_main_workspace_hex_grid.png" /><br/>
+  <em>Figure 1: Main Application Workspace, Live HEX Memory Grid &amp; High-Speed Hardware Controls</em>
 </p>
 
 <p align="center">
-  <img width="95%" alt="Fuse Bits Configuration & Lock Settings" src="https://github.com/user-attachments/assets/cb3a921d-e870-4517-9cae-52a59722d673" /><br/>
-  <em>Figure 2: Visual Fuse & Lock Bits Manager with Safety Verification</em>
+  <img width="95%" alt="Universal AVR Microcontroller Chip Database" src="Images/Screenshots/02_supported_avr_chips_list.png" /><br/>
+  <em>Figure 2: Universal AVR Chip Database (ATmega, ATtiny &amp; AT90 Series)</em>
 </p>
 
 <p align="center">
-  <img width="95%" alt="Interactive AVR Clock Generator" src="https://github.com/user-attachments/assets/6b6cf7df-96a3-4ae4-8d3c-3295434191ed" /><br/>
-  <em>Figure 3: Interactive AVR Clock Generator & Frequency Presets</em>
+  <img width="95%" alt="Fuse Bits & Lock Settings Manager" src="Images/Screenshots/03_fuse_lock_bits_settings.png" /><br/>
+  <em>Figure 3: Visual Fuse &amp; Lock Bits Manager with Calibration &amp; Clock Tools</em>
 </p>
 
 <p align="center">
-  <img width="95%" alt="Interactive ZIF Socket Placement HUD" src="https://github.com/user-attachments/assets/2cbd9c7c-a1ed-4bba-a6fb-075aad91f6c6" /><br/>
-  <em>Figure 4: ZIF Socket Placement Guide & DIP IC Pin Alignment</em>
+  <img width="95%" alt="ISP SCK Clock Speed Selector" src="Images/Screenshots/04_isp_sck_clock_speeds.png" /><br/>
+  <em>Figure 4: Programmable ISP SCK Speed Control (Auto, 1.5 MHz down to 500 Hz)</em>
 </p>
 
 <p align="center">
-  <img width="95%" alt="Open Source Support & Sponsorship Dialog" src="https://github.com/user-attachments/assets/c2eeb7ce-ae34-4cc1-b44f-814bf35fd3d2" /><br/>
-  <em>Figure 5: Support Open Source Development & Community Contribution Modal</em>
+  <img width="95%" alt="Telemetry & Hardware Diagnostic Log" src="Images/Screenshots/05_telemetry_hardware_log.png" /><br/>
+  <em>Figure 5: Real-Time Telemetry &amp; Hardware Diagnostic Log (Auto-Sync &amp; Safe RESET Release)</em>
+</p>
+
+<p align="center">
+  <img width="65%" alt="Friend's Bench Treat & Community Dialog" src="Images/Screenshots/06_friends_bench_treat_dialog.png" /><br/>
+  <em>Figure 6: Friend's Bench Treat ($10 / $20) &amp; Community Links Modal</em>
 </p>
 
 ---
