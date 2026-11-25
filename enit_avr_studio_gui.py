@@ -747,6 +747,54 @@ class WorkerThread(QThread):
         self.prog = programmer
         self.kwargs = kwargs
 
+    def _verify_against_source(self, chip_size: int, page_size: int, buffer_data: bytes,
+                               source_path: Optional[str], label: str = "Flash") -> Tuple[bool, str]:
+        """
+        Reads back Flash memory from the physical ATmega chip and compares byte-for-byte
+        against the original PC source file (if loaded from disk) or the memory buffer.
+        """
+        expected = buffer_data
+        source_desc = "memory buffer"
+
+        if source_path and os.path.exists(source_path):
+            self.log_signal.emit(f"[VERIFY] Reloading original PC file for strict comparison: {source_path}")
+            pc_hex = IntelHex(size=chip_size)
+            pc_hex.load_hex_file(source_path)
+            expected = bytes(pc_hex.buffer[:chip_size])
+            source_desc = os.path.basename(source_path)
+
+        self.log_signal.emit(f"[VERIFY] Reading back {label} ({chip_size} bytes) from ATmega chip...")
+        actual = self.prog.read_flash(
+            chip_size, page_size,
+            progress_callback=lambda c, t: self.progress_signal.emit(c, t),
+            telemetry_callback=lambda telem: self.telemetry_signal.emit({
+                **telem,
+                "status": f"Verifying vs {source_desc}: 0x{telem['current']:04X}/{chip_size} ({telem['percent']}%)"
+            })
+        )
+
+        mismatches = 0
+        first_err = None
+        for i in range(chip_size):
+            if actual[i] != expected[i]:
+                if first_err is None:
+                    first_err = (i, expected[i], actual[i])
+                mismatches += 1
+
+        if mismatches == 0:
+            self.log_signal.emit(
+                f"[VERIFY OK] 100% Bit-Exact Match! Chip {label} ({chip_size} bytes) == PC File ({source_desc})."
+            )
+            return True, f"Verify OK (100% Match vs {source_desc})"
+
+        addr, exp_b, act_b = first_err
+        err_msg = (
+            f"VERIFY FAILED: {mismatches} byte mismatch(es) vs {source_desc}! "
+            f"First mismatch at 0x{addr:04X}: PC=0x{exp_b:02X}, Chip=0x{act_b:02X}"
+        )
+        self.log_signal.emit(f"[ERROR] {err_msg}")
+        return False, err_msg
+
     def run(self):
         try:
             self.prog.log_cb = lambda msg: self.log_signal.emit(msg)
@@ -784,13 +832,18 @@ class WorkerThread(QThread):
                 data = self.kwargs["data"]
                 page = self.kwargs.get("page_size", 128)
                 skip_blank = self.kwargs.get("skip_blank", True)
+                source_path = self.kwargs.get("source_path")
                 ok = self.prog.write_flash(
                     data, page,
                     skip_blank_pages=skip_blank,
                     progress_callback=lambda c, t: self.progress_signal.emit(c, t),
                     telemetry_callback=lambda telem: self.telemetry_signal.emit(telem)
                 )
-                self.finished_signal.emit(ok, "Flash write OK" if ok else "Flash write failed")
+                if not ok:
+                    self.finished_signal.emit(False, "Flash write failed")
+                    return
+                v_ok, v_msg = self._verify_against_source(len(data), page, data, source_path, "Flash")
+                self.finished_signal.emit(v_ok, f"Flash Write & {v_msg}" if v_ok else v_msg)
 
             elif self.action == "read_eeprom":
                 size = self.kwargs["size"]
@@ -814,12 +867,9 @@ class WorkerThread(QThread):
             elif self.action == "verify_flash":
                 expected = self.kwargs["data"]
                 page = self.kwargs.get("page_size", 128)
-                ok, err_addr = self.prog.verify_flash(
-                    expected, page,
-                    progress_callback=lambda c, t: self.progress_signal.emit(c, t),
-                    telemetry_callback=lambda telem: self.telemetry_signal.emit(telem)
-                )
-                self.finished_signal.emit(ok, "Flash verified!" if ok else f"Mismatch at 0x{err_addr:X}")
+                source_path = self.kwargs.get("source_path")
+                v_ok, v_msg = self._verify_against_source(len(expected), page, expected, source_path, "Flash")
+                self.finished_signal.emit(v_ok, v_msg)
 
             elif self.action == "read_fuses":
                 fuses = self.prog.read_fuses()
@@ -832,21 +882,22 @@ class WorkerThread(QThread):
                 self.finished_signal.emit(ok, "Fuses updated" if ok else "Fuse write failed")
 
             elif self.action == "write_all":
-                # Unified Write All: Flash (if present), EEPROM (if present), Fuses (if enabled)
+                # Unified Write All: Erase -> Flash -> Strict Verify vs PC File -> EEPROM -> Fuses
                 chip = self.kwargs["chip"]
                 flash_data = self.kwargs.get("flash_data")
+                flash_source_path = self.kwargs.get("flash_source_path")
                 eeprom_data = self.kwargs.get("eeprom_data")
                 fuses = self.kwargs.get("fuses")
 
                 # Step 1: Chip Erase
-                self.log_signal.emit("[WRITE ALL - STEP 1/4] Performing Chip Erase...")
+                self.log_signal.emit("[WRITE ALL - STEP 1/5] Performing Chip Erase...")
                 if not self.prog.chip_erase():
                     self.finished_signal.emit(False, "Chip Erase failed during Write All")
                     return
 
-                # Step 2: Write Flash
+                # Step 2 & 3: Write Flash & Verify against original PC source file
                 if flash_data and any(b != 0xFF for b in flash_data):
-                    self.log_signal.emit(f"[WRITE ALL - STEP 2/4] Programming Flash ({len(flash_data)} bytes)...")
+                    self.log_signal.emit(f"[WRITE ALL - STEP 2/5] Programming Flash ({len(flash_data)} bytes)...")
                     ok = self.prog.write_flash(
                         flash_data, chip.page_size, skip_blank_pages=True,
                         progress_callback=lambda c, t: self.progress_signal.emit(c, t),
@@ -856,9 +907,17 @@ class WorkerThread(QThread):
                         self.finished_signal.emit(False, "Flash write failed during Write All")
                         return
 
-                # Step 3: Write EEPROM
+                    self.log_signal.emit("[WRITE ALL - STEP 3/5] Verifying Chip Flash vs PC Source File...")
+                    v_ok, v_msg = self._verify_against_source(
+                        chip.flash_size, chip.page_size, flash_data, flash_source_path, "Flash"
+                    )
+                    if not v_ok:
+                        self.finished_signal.emit(False, f"Write All aborted: {v_msg}")
+                        return
+
+                # Step 4: Write EEPROM
                 if eeprom_data and any(b != 0xFF for b in eeprom_data):
-                    self.log_signal.emit(f"[WRITE ALL - STEP 3/4] Programming EEPROM ({len(eeprom_data)} bytes)...")
+                    self.log_signal.emit(f"[WRITE ALL - STEP 4/5] Programming EEPROM ({len(eeprom_data)} bytes)...")
                     ok = self.prog.write_eeprom(
                         eeprom_data, 4,
                         progress_callback=lambda c, t: self.progress_signal.emit(c, t),
@@ -868,12 +927,12 @@ class WorkerThread(QThread):
                         self.finished_signal.emit(False, "EEPROM write failed during Write All")
                         return
 
-                # Step 4: Write Fuses
+                # Step 5: Write Fuses
                 if fuses:
-                    self.log_signal.emit("[WRITE ALL - STEP 4/4] Writing Selected Fuse & Lock Bits...")
+                    self.log_signal.emit("[WRITE ALL - STEP 5/5] Writing Selected Fuse & Lock Bits...")
                     self.prog.write_fuses(fuses.get("low"), fuses.get("high"), fuses.get("ext"), fuses.get("lock"))
 
-                self.finished_signal.emit(True, "WRITE ALL COMPLETED SUCCESSFULLY!")
+                self.finished_signal.emit(True, "WRITE ALL & VERIFY OK (100% Match!)")
 
             elif self.action == "read_all":
                 # Unified Read All: Fuses, Flash, EEPROM
@@ -912,7 +971,7 @@ class EnitAVRStudio(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("ENIT AVR Studio v1.0 - Professional Microcontroller Programmer Suite")
+        self.setWindowTitle("ENIT AVR Studio v1.0.1 - Professional Microcontroller Programmer Suite")
         self.resize(1180, 820)
         self.setStyleSheet(STYLE_SHEET)
 
@@ -924,6 +983,8 @@ class EnitAVRStudio(QMainWindow):
         self.active_chip: Optional[AVRChip] = find_by_name("ATmega328P")
         self.flash_buffer = IntelHex(size=32768)
         self.eeprom_buffer = IntelHex(size=1024)
+        self.loaded_flash_path: Optional[str] = None
+        self.loaded_eeprom_path: Optional[str] = None
         self.worker: Optional[WorkerThread] = None
 
         self._setup_ui()
@@ -1492,6 +1553,10 @@ class EnitAVRStudio(QMainWindow):
 
     def _clear_buffer(self, buf: IntelHex, tbl: QTableWidget):
         buf.clear(0xFF)
+        if buf is self.flash_buffer:
+            self.loaded_flash_path = None
+        elif buf is self.eeprom_buffer:
+            self.loaded_eeprom_path = None
         self._populate_table(tbl, buf.buffer)
         self.log("Buffer reset to 0xFF.")
 
@@ -1564,17 +1629,19 @@ class EnitAVRStudio(QMainWindow):
     def on_write_flash(self):
         if not self.active_chip:
             return
-        self._run_worker("write_flash", "Programming Flash memory...",
+        self._run_worker("write_flash", "Programming & Verifying Flash memory...",
                          data=bytes(self.flash_buffer.buffer[:self.active_chip.flash_size]),
                          page_size=self.active_chip.page_size,
-                         skip_blank=True)
+                         skip_blank=True,
+                         source_path=self.loaded_flash_path)
 
     def on_verify_flash(self):
         if not self.active_chip:
             return
-        self._run_worker("verify_flash", "Verifying Flash memory...",
+        self._run_worker("verify_flash", "Verifying Flash memory vs PC File...",
                          data=bytes(self.flash_buffer.buffer[:self.active_chip.flash_size]),
-                         page_size=self.active_chip.page_size)
+                         page_size=self.active_chip.page_size,
+                         source_path=self.loaded_flash_path)
 
     def on_read_eeprom(self):
         if not self.active_chip:
@@ -1723,9 +1790,10 @@ class EnitAVRStudio(QMainWindow):
         if self.chk_write_lock.isChecked():
             fuses["lock"] = int(self.edit_lock.text(), 16)
 
-        self._run_worker("write_all", "Executing Write All...",
+        self._run_worker("write_all", "Executing Write All & Post-Write Verification...",
                          chip=self.active_chip,
                          flash_data=flash_data,
+                         flash_source_path=self.loaded_flash_path,
                          eeprom_data=eeprom_data,
                          fuses=fuses)
 
@@ -1734,7 +1802,9 @@ class EnitAVRStudio(QMainWindow):
         path, _ = QFileDialog.getOpenFileName(self, "Open Intel HEX File", "", "Intel HEX (*.hex);;All Files (*.*)")
         if path:
             try:
+                self.flash_buffer.clear(0xFF)
                 cnt, highest = self.flash_buffer.load_hex_file(path)
+                self.loaded_flash_path = path
                 self._populate_table(self.tbl_flash, self.flash_buffer.buffer)
                 self.lbl_flash_info.setText(f"Loaded: {cnt} Bytes (Max Addr: 0x{highest:04X}) | File: {os.path.basename(path)}")
                 self.log(f"Successfully loaded {cnt} bytes into Flash buffer from {path}")
@@ -1788,7 +1858,14 @@ class EnitAVRStudio(QMainWindow):
         def on_finished(ok: bool, msg: str):
             self._set_buttons_enabled(True)
             self.lbl_status.setText(msg)
-            self.lbl_telem_status.setText(f"COMPLETED: {msg}")
+            if ok:
+                self.lbl_telem_status.setStyleSheet("font-weight: bold; color: #10b981; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px;")
+                self.lbl_telem_status.setText(f"COMPLETED: {msg}")
+            else:
+                self.lbl_telem_status.setStyleSheet("font-weight: bold; color: #ef4444; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px;")
+                self.lbl_telem_status.setText(f"FAILED: {msg}")
+                if "MISMATCH" in msg.upper() or "VERIFY FAILED" in msg.upper():
+                    QMessageBox.critical(self, "Verification Mismatch Detected", msg)
             if self.programmer.is_connected:
                 self.btn_connect.setText("Disconnect")
                 if self.programmer.active_chip:

@@ -18,6 +18,12 @@
 
 **ENIT AVR Studio** is a modern, high-performance open-source Windows application designed for flashing, testing, and diagnosing Microchip/Atmel AVR 8-bit microcontrollers via **USBasp ISP programmers**. Built with an industrial cyber-dark aesthetic and Google Stitch design tokens, it offers superior reliability, non-blocking telemetry, intelligent page-skipping flash algorithms, comprehensive fuse configuration, and an interactive ZIF socket placement guide.
 
+### 🆕 What's New in v1.0.1 (Bug Fix: ATmega328P & AVR Verification + HEX Export)
+> **Important Update for Existing Users**: If you downloaded `v1.0`, please upgrade to **`v1.0.1`**!
+- **Strict Post-Write Verification vs Original PC File**: Every Flash write (`Write Flash` and `Write All`) now automatically reads back the chip's Flash memory and performs a 100% byte-for-byte comparison directly against the original `.hex` file on your PC before reporting `Verify OK`. Any mismatch immediately halts and reports the exact failing address.
+- **Standard Intel HEX Export Fix**: Fixed `.hex` file export so saved dumps skip `0xFF` blank lines and omit redundant `04` extended linear records for `< 64KB` MCUs (like ATmega328P), producing 100% byte-identical files in HxD Hex Editor compared to `avr-gcc` and eXtreme Burner.
+- **Clean Buffer Reload**: Loading a new `.hex` file now resets the memory buffer cleanly to `0xFF` first so previous bytes never persist.
+
 ---
 
 ## ⚡ Key Features
