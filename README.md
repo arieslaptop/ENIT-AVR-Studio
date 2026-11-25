@@ -209,10 +209,7 @@ python enit_avr_cli.py -c ATmega328P -wf myFirmware.hex -we myEEPROM.eep -wF FF:
   <em>Figure 5: Real-Time Telemetry &amp; Hardware Diagnostic Log (Auto-Sync &amp; Safe RESET Release)</em>
 </p>
 
-<p align="center">
-  <img width="65%" alt="Friend's Bench Treat & Community Dialog" src="Images/Screenshots/06_friends_bench_treat_dialog.png" /><br/>
-  <em>Figure 6: Friend's Bench Treat ($10 / $20) &amp; Community Links Modal</em>
-</p>
+
 
 ---
 
