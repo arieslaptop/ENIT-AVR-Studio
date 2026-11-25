@@ -10,7 +10,7 @@
 [![Website: arieslaptop.in](https://img.shields.io/badge/Website-arieslaptop.in-00adb5.svg)](http://www.arieslaptop.in)
 [![YouTube](https://img.shields.io/badge/YouTube-Harshad%20Patel-FF0000.svg)](https://www.youtube.com/harshadpatel)
 [![Facebook](https://img.shields.io/badge/Facebook-aries.harshadpatel-1877F2.svg)](https://www.facebook.com/aries.harshadpatel)
-[![Donate: PayPal](https://img.shields.io/badge/Sponsor-PayPal.Me-0079C1.svg)](https://paypal.me/ariestech)
+[![Friend's Bench Treat](https://img.shields.io/badge/Friend's%20Bench%20Treat-%2410%20%2F%20%2420-0079C1.svg)](https://paypal.me/ariestech)
 
 ---
 
@@ -102,17 +102,21 @@ ENIT AVR Studio connects to target AVR microcontrollers via the standard **10-pi
 
 ---
 
-## 💖 Support & Sponsorship (Open Source Community)
+## ☕ Friend's Bench Treat
 
-ENIT AVR Studio is maintained and actively developed as free, open-source software by **Aries Computer Solutions**, founded by **Harshad Patel in India**. 
+ENIT AVR Studio is built and shared freely for fellow electronics technicians, students, and AVR makers by **Aries Computer Solutions** (**Harshad Patel, India**).
 
-Your sponsorships help acquire test hardware, fund new microcontroller protocol development, and keep these tools open and accessible to all developers:
+If this tool saved you time on the repair bench and you'd like to share a friendly gesture, you're always welcome to grab us an optional bench treat via **[paypal.me/ariestech](https://paypal.me/ariestech)**:
 
-- ☕ **[$10 USD Sponsorship](https://paypal.me/ariestech/10USD)**: Fund coffee, test cables, and server bandwidth.
-- 🚀 **[$20 USD Sponsorship](https://paypal.me/ariestech/20USD)**: Sponsor new AVR microcontroller sample chips and test adapters.
-- ✨ **[Custom Sponsorship Amount](https://paypal.me/ariestech)**: Any contribution via PayPal.Me is deeply appreciated!
+- ☕ **[$10 Coffee Treat](https://paypal.me/ariestech/10USD)**: An optional cup of coffee for late-night firmware debugging.
+- 🥪 **[$20 Bench Snack + Coffee Treat](https://paypal.me/ariestech/20USD)**: An optional coffee and snack for the workbench.
+- ✨ **[Any Friendly Treat](https://paypal.me/ariestech)**: Completely optional — using and sharing the tool is already awesome!
 
-**GitHub Repository**: [https://github.com/arieslaptop/ENIT-AVR-Studio](https://github.com/arieslaptop/ENIT-AVR-Studio)
+> *"If a chip still gives trouble, bring a cup of coffee and let's troubleshoot together!"*
+
+- **GitHub Repository**: [https://github.com/arieslaptop/ENIT-AVR-Studio](https://github.com/arieslaptop/ENIT-AVR-Studio)
+- **Official Website**: [http://www.arieslaptop.in](http://www.arieslaptop.in)
+- **YouTube Channel**: [https://www.youtube.com/harshadpatel](https://www.youtube.com/harshadpatel)
 
 ---
 
@@ -248,7 +252,7 @@ ENIT-AVR-Studio/
 | 📺 **YouTube Channel** | [youtube.com/harshadpatel](https://www.youtube.com/harshadpatel) | Video guides, technical tutorials & repair demos |
 | 📘 **Facebook** | [facebook.com/aries.harshadpatel](https://www.facebook.com/aries.harshadpatel) | Official community page & updates |
 | 🐙 **GitHub** | [github.com/arieslaptop](https://github.com/arieslaptop) | Open-source software repositories |
-| 💖 **PayPal Sponsorship** | [paypal.me/ariestech](https://paypal.me/ariestech) | Direct community development contributions |
+| ☕ **Friend's Bench Treat** | [paypal.me/ariestech](https://paypal.me/ariestech) | Optional $10 coffee / $20 bench snack + coffee treat |
 
 ---
 

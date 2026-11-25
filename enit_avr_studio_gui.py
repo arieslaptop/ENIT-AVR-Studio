@@ -556,16 +556,16 @@ class ZIFPlacementDialog(QDialog):
         layout.addLayout(btn_layout)
 
 
-class DonateDialog(QDialog):
+class BenchTreatDialog(QDialog):
     """
-    Support Open Source Development Modal for Aries Computer Solutions.
-    Provides direct sponsorship tiers, link copying, and repository navigation.
+    Friendly 'Friend's Bench Treat' modal for Aries Computer Solutions.
+    Offers optional $10 coffee / $20 bench snack treat links, copyable URL, and community links.
     """
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Support Open Source Development - Aries Computer Solutions")
+        self.setWindowTitle("Friend's Bench Treat - Aries Computer Solutions")
         self.setModal(True)
-        self.resize(620, 480)
+        self.resize(620, 490)
         self.setStyleSheet(STYLE_SHEET)
 
         icon_path = os.path.join(BASE_DIR, "Icons", "enit_avr_studio.ico")
@@ -574,20 +574,20 @@ class DonateDialog(QDialog):
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(24, 22, 24, 22)
-        layout.setSpacing(16)
+        layout.setSpacing(15)
 
         # Header Badge and Titles
         hdr_layout = QHBoxLayout()
         hdr_layout.setSpacing(14)
-        badge = QLabel("❤")
-        badge.setStyleSheet("font-size: 24px; color: #f43f5e; background: #1e293b; border: 1px solid #334155; border-radius: 21px; padding: 4px; text-align: center;")
+        badge = QLabel("☕")
+        badge.setStyleSheet("font-size: 22px; color: #38bdf8; background: #1e293b; border: 1px solid #334155; border-radius: 21px; padding: 4px; text-align: center;")
         badge.setFixedSize(42, 42)
         badge.setAlignment(Qt.AlignCenter)
         hdr_layout.addWidget(badge)
 
         head_info = QVBoxLayout()
         head_info.setSpacing(3)
-        head_title = QLabel("Support Open Source Development")
+        head_title = QLabel("Friend's Bench Treat ($10 / $20)")
         head_title.setStyleSheet("font-size: 17px; font-weight: bold; color: #38bdf8;")
         head_sub = QLabel("Aries Computer Solutions • Harshad Patel, India")
         head_sub.setStyleSheet("font-size: 12px; font-weight: 600; color: #94a3b8;")
@@ -597,7 +597,7 @@ class DonateDialog(QDialog):
         hdr_layout.addStretch()
         layout.addLayout(hdr_layout)
 
-        # Mission Statement Box
+        # Friendly Message Box
         msg_frame = QFrame()
         msg_frame.setStyleSheet("background-color: #0b0f19; border: 1px solid #1e293b; border-radius: 8px; padding: 12px;")
         msg_layout = QVBoxLayout(msg_frame)
@@ -605,37 +605,41 @@ class DonateDialog(QDialog):
         msg_layout.setSpacing(8)
 
         desc_lbl = QLabel(
-            "Thank you for using ENIT AVR Studio! Your sponsorship powers continuous "
-            "development, cutting-edge hardware flashing algorithms, AVR chip library updates, "
-            "and ensures high-performance open-source tools remain accessible for engineers, "
-            "repair technicians, students, and makers worldwide."
+            "ENIT AVR Studio is built and shared freely for fellow electronics technicians, "
+            "students, and AVR makers. If this tool saved you time on the workbench and you'd "
+            "like to share a friendly gesture, an optional coffee or bench snack treat is always appreciated!"
         )
         desc_lbl.setWordWrap(True)
         desc_lbl.setStyleSheet("color: #cbd5e1; font-size: 13px; line-height: 1.5;")
         msg_layout.addWidget(desc_lbl)
+
+        quote_lbl = QLabel("“If a chip still gives trouble, bring a cup of coffee and let's troubleshoot together!”")
+        quote_lbl.setWordWrap(True)
+        quote_lbl.setStyleSheet("color: #38bdf8; font-size: 13px; font-style: italic; font-weight: 600; padding-top: 4px;")
+        msg_layout.addWidget(quote_lbl)
         layout.addWidget(msg_frame)
 
-        # Tier Buttons
-        tier_lbl = QLabel("SELECT SPONSORSHIP TIER:")
+        # Optional Treat Buttons
+        tier_lbl = QLabel("OPTIONAL BENCH TREAT:")
         tier_lbl.setStyleSheet("font-size: 11px; font-weight: bold; color: #38bdf8; letter-spacing: 0.8px;")
         layout.addWidget(tier_lbl)
 
         btn_tier_layout = QHBoxLayout()
         btn_tier_layout.setSpacing(12)
 
-        btn_10 = QPushButton("💲 $10 USD")
+        btn_10 = QPushButton("☕ $10 Coffee Treat")
         btn_10.setCursor(Qt.PointingHandCursor)
         btn_10.setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #065f46, stop:1 #047857); color: #ecfdf5; font-size: 13px; font-weight: bold; padding: 10px 16px; border-radius: 6px; border: 1px solid #10b981;")
         btn_10.clicked.connect(lambda: self._open_url(f"{PAYPAL_ME_BASE_URL}/10USD"))
         btn_tier_layout.addWidget(btn_10)
 
-        btn_20 = QPushButton("💲 $20 USD")
+        btn_20 = QPushButton("🥪 $20 Snack + Coffee")
         btn_20.setCursor(Qt.PointingHandCursor)
         btn_20.setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0284c7, stop:1 #0369a1); color: #f0f9ff; font-size: 13px; font-weight: bold; padding: 10px 16px; border-radius: 6px; border: 1px solid #38bdf8;")
         btn_20.clicked.connect(lambda: self._open_url(f"{PAYPAL_ME_BASE_URL}/20USD"))
         btn_tier_layout.addWidget(btn_20)
 
-        btn_custom = QPushButton("✨ Custom Amount")
+        btn_custom = QPushButton("✨ Custom Treat")
         btn_custom.setCursor(Qt.PointingHandCursor)
         btn_custom.setStyleSheet("background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4f46e5, stop:1 #4338ca); color: #eef2ff; font-size: 13px; font-weight: bold; padding: 10px 16px; border-radius: 6px; border: 1px solid #818cf8;")
         btn_custom.clicked.connect(lambda: self._open_url(PAYPAL_ME_BASE_URL))
@@ -1133,9 +1137,9 @@ class EnitAVRStudio(QMainWindow):
         self.btn_zif.clicked.connect(self.on_show_zif_guide)
         tb_layout.addWidget(self.btn_zif)
 
-        self.btn_donate = QPushButton("❤ Donate")
+        self.btn_donate = QPushButton("☕ Bench Treat ($10 / $20)")
         self.btn_donate.setProperty("class", "DonateBtn")
-        self.btn_donate.setToolTip("Support Open Source Development - Aries Computer Solutions")
+        self.btn_donate.setToolTip("Friend's Bench Treat ($10 / $20) — If a chip still gives trouble, bring a cup of coffee and let's troubleshoot together!")
         self.btn_donate.setCursor(Qt.PointingHandCursor)
         self.btn_donate.clicked.connect(self.on_show_donate_dialog)
         tb_layout.addWidget(self.btn_donate)
@@ -1623,7 +1627,7 @@ class EnitAVRStudio(QMainWindow):
         dlg.exec()
 
     def on_show_donate_dialog(self):
-        dlg = DonateDialog(self)
+        dlg = BenchTreatDialog(self)
         dlg.exec()
 
     def on_chip_erase(self):
