@@ -123,33 +123,38 @@ class IntelHex:
         self.has_data = bytes_loaded > 0
         return bytes_loaded, highest_address
 
-    def save_hex_file(self, file_path: str, max_address: Optional[int] = None, line_length: int = 16):
+    def save_hex_file(self, file_path: str, max_address: Optional[int] = None, line_length: int = 16, skip_blank: bool = True):
         """
         Exports the memory buffer into Intel HEX format.
+        Matches standard AVR/avr-gcc/eXtreme Burner HEX formatting:
+        - Omits redundant 04 extended linear address record when address < 64KB.
+        - Skips blank 0xFF-filled lines when skip_blank=True to keep file size & layout identical.
         """
         if max_address is None:
             max_address = len(self.buffer) - 1
 
         with open(file_path, 'w', encoding='ascii') as f:
-            current_ext_addr = -1
+            current_ext_addr = 0
             addr = 0
             while addr <= max_address:
-                # Check 64KB boundary
-                upper_addr = addr >> 16
-                if upper_addr != current_ext_addr:
-                    current_ext_addr = upper_addr
-                    # Write type 04 record
-                    data_ext = bytes([(current_ext_addr >> 8) & 0xFF, current_ext_addr & 0xFF])
-                    rec = bytearray([0x02, 0x00, 0x00, 0x04]) + data_ext
-                    checksum = (-sum(rec)) & 0xFF
-                    f.write(f":02000004{data_ext.hex().upper()}{checksum:02X}\n")
-
                 chunk_len = min(line_length, max_address - addr + 1)
                 chunk = self.buffer[addr:addr + chunk_len]
-                local_addr = addr & 0xFFFF
-                rec = bytearray([chunk_len, (local_addr >> 8) & 0xFF, local_addr & 0xFF, 0x00]) + chunk
-                checksum = (-sum(rec)) & 0xFF
-                f.write(f":{chunk_len:02X}{local_addr:04X}00{chunk.hex().upper()}{checksum:02X}\n")
+
+                if not skip_blank or any(b != self.fill_byte for b in chunk):
+                    # Check 64KB boundary (only emit type 04 record when upper 16 bits change)
+                    upper_addr = addr >> 16
+                    if upper_addr != current_ext_addr:
+                        current_ext_addr = upper_addr
+                        data_ext = bytes([(current_ext_addr >> 8) & 0xFF, current_ext_addr & 0xFF])
+                        rec = bytearray([0x02, 0x00, 0x00, 0x04]) + data_ext
+                        checksum = (-sum(rec)) & 0xFF
+                        f.write(f":02000004{data_ext.hex().upper()}{checksum:02X}\n")
+
+                    local_addr = addr & 0xFFFF
+                    rec = bytearray([chunk_len, (local_addr >> 8) & 0xFF, local_addr & 0xFF, 0x00]) + chunk
+                    checksum = (-sum(rec)) & 0xFF
+                    f.write(f":{chunk_len:02X}{local_addr:04X}00{chunk.hex().upper()}{checksum:02X}\n")
+
                 addr += chunk_len
 
             # End of file record
