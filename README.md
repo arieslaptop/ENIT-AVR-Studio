@@ -18,9 +18,11 @@
 
 **ENIT AVR Studio** is a modern, high-performance open-source Windows application designed for flashing, testing, and diagnosing Microchip/Atmel AVR 8-bit microcontrollers via **USBasp ISP programmers**. Built with an industrial cyber-dark aesthetic and Google Stitch design tokens, it offers superior reliability, non-blocking telemetry, intelligent page-skipping flash algorithms, comprehensive fuse configuration, and an interactive ZIF socket placement guide.
 
-### 🆕 What's New in v1.0.1 (Bug Fix: ATmega328P & AVR Verification + HEX Export)
+### 🆕 What's New in v1.0.1 (Bug Fix Release — Recommended for All Users)
 > **Important Update for Existing Users**: If you downloaded `v1.0`, please upgrade to **`v1.0.1`**!
 - **Strict Post-Write Verification vs Original PC File**: Every Flash write (`Write Flash` and `Write All`) now automatically reads back the chip's Flash memory and performs a 100% byte-for-byte comparison directly against the original `.hex` file on your PC before reporting `Verify OK`. Any mismatch immediately halts and reports the exact failing address.
+- **USBasp Address-Shift & Bootloader Fix (ATmega328P)**: Fixed sparse `.hex` programming (e.g., application + `0x7800` bootloader) so sequential `prog_address` never shifts on USBasp firmware clones, with upgraded `5000ms` USB transfer stability.
+- **ZIF Socket Hot-Swap Auto-Sync**: Every hardware operation (`Read Fuses`, `Write Fuses`, `Read All`, `Write All`, `Chip Erase`) now automatically re-syncs the currently inserted IC and safely releases `RESET` afterward — program 100+ ICs continuously without clicking Disconnect/Connect or Auto-Detect between chips.
 - **Standard Intel HEX Export Fix**: Fixed `.hex` file export so saved dumps skip `0xFF` blank lines and omit redundant `04` extended linear records for `< 64KB` MCUs (like ATmega328P), producing 100% byte-identical files in HxD Hex Editor compared to `avr-gcc` and eXtreme Burner.
 - **Clean Buffer Reload**: Loading a new `.hex` file now resets the memory buffer cleanly to `0xFF` first so previous bytes never persist.
 
@@ -114,11 +116,27 @@ Your sponsorships help acquire test hardware, fund new microcontroller protocol 
 
 ---
 
-## 🛠️ Quick Start & Installation
+## 🛠️ USBasp Driver Installation (Zadig Setup Guide)
+
+Before using ENIT AVR Studio on Windows, your **USBasp** programmer must use the **`libusb-win32`** (`libusb0`) driver. Follow these steps using **Zadig**:
+
+1. Plug your **USBasp** programmer into a USB port on your Windows PC.
+2. Download and run **Zadig** from the official website: **[https://zadig.akeo.ie/](https://zadig.akeo.ie/)**
+3. In Zadig, click the top menu **Options &rarr; List All Devices**.
+4. From the main dropdown list, select **`USBasp`** *(USB ID: `16C0 : 05DC`)*.
+5. In the target driver box (to the right of the green arrow), click the up/down arrows and select **`libusb-win32`** *(do **not** select WinUSB or libusbK)*.
+6. Click **Install Driver** (or **Replace Driver**) and wait for Windows to complete installation.
+7. Open **Windows Device Manager** and confirm **`USBasp`** appears under **`libusb-win32 devices`**:
+
+![Windows Device Manager USBasp libusb-win32](Images/device_manager_usbasp_driver.png)
+
+---
+
+## 🚀 Quick Start & Installation
 
 ### Option 1: Standalone Windows Executable (No Python Required)
-1. Download the latest `ENIT_AVR_Studio.exe` or `ENIT_AVR_Studio_v1.0_Windows_x64.zip` from the [Releases](https://github.com/arieslaptop/ENIT-AVR-Studio/releases) page.
-2. Ensure your USBasp programmer has the `libusb-win32` driver installed (use [Zadig](https://zadig.akeo.ie/) if needed).
+1. Install the **`libusb-win32`** driver for USBasp using **Zadig** (see steps above).
+2. Download the latest `ENIT_AVR_Studio.exe` or `ENIT_AVR_Studio_v1.0.1_Windows_x64.zip` from the [Releases](https://github.com/arieslaptop/ENIT-AVR-Studio/releases) page.
 3. Double-click `ENIT_AVR_Studio.exe` to launch immediately.
 
 ### Option 2: Running from Source (Python 3.10+)
