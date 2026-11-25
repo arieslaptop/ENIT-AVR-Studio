@@ -11,6 +11,8 @@
 [![YouTube](https://img.shields.io/badge/YouTube-Harshad%20Patel-FF0000.svg)](https://www.youtube.com/harshadpatel)
 [![Facebook](https://img.shields.io/badge/Facebook-aries.harshadpatel-1877F2.svg)](https://www.facebook.com/aries.harshadpatel)
 [![Friend's Bench Treat](https://img.shields.io/badge/Friend's%20Bench%20Treat-%2410%20%2F%20%2420-0079C1.svg)](https://paypal.me/ariestech)
+[![Total Downloads](https://img.shields.io/github/downloads/arieslaptop/ENIT-AVR-Studio/total?color=10b981&label=Total%20Downloads)](https://github.com/arieslaptop/ENIT-AVR-Studio/releases)
+![All-Time Visitors](https://komarev.com/ghpvc/?username=arieslaptop-ENIT-AVR-Studio&label=Visitors&color=00adb5&style=flat)
 
 ---
 
