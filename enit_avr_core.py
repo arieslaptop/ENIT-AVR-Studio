@@ -455,10 +455,35 @@ class USBaspProgrammer:
             tx_buf = ctypes.create_string_buffer(bytes(chunk), page_size)
             # wIndex: page_size | (flags << 8), flags = 3 (FIRST | LAST)
             wIndex = page_size | (3 << 8)
+            time.sleep(0.005)  # 5ms pacing for V-USB USBasp stability
             res = self.lib.usb_control_msg(
                 self.handle, 0x40, USBASP_FUNC_WRITEFLASH,
                 addr & 0xFFFF, wIndex, tx_buf, page_size, 5000
             )
+            if res < 0:
+                # Safe recovery check: read back page to see if USBasp wrote it before USB ACK failed
+                self.log(f"WARNING: USB write hiccup at page {p} (0x{addr:06X}, err={res}), verifying chip state...")
+                time.sleep(0.05)
+                rx_chk = (ctypes.c_char * page_size)()
+                chk_res = self.lib.usb_control_msg(
+                    self.handle, 0xC0, USBASP_FUNC_READFLASH,
+                    addr & 0xFFFF, 0, rx_chk, page_size, 5000
+                )
+                if chk_res == page_size and any(b != 0xFF for b in chunk):
+                    if rx_chk.raw[:page_size] == bytes(chunk):
+                        self.log(f"Page {p} verified already written on chip; continuing.")
+                        res = page_size
+                    elif all(b == 0xFF for b in rx_chk.raw[:page_size]):
+                        self.log(f"Page {p} was not written yet; retrying safely...")
+                        res = self.lib.usb_control_msg(
+                            self.handle, 0x40, USBASP_FUNC_WRITEFLASH,
+                            addr & 0xFFFF, wIndex, tx_buf, page_size, 5000
+                        )
+                elif chk_res == page_size and all(b == 0xFF for b in chunk) and all(b == 0xFF for b in rx_chk.raw[:page_size]):
+                    # Blank gap page already 0xFF on chip
+                    self.log(f"Blank page {p} (0x{addr:06X}) confirmed 0xFF; continuing.")
+                    res = page_size
+
             if res < 0:
                 self.log(f"ERROR: Flash write failed at page {p} (address 0x{addr:06X}, err={res})")
                 return False

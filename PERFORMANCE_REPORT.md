@@ -10,9 +10,9 @@
 
 ## 1. Executive Summary
 
-ENIT AVR Studio introduces **Smart Blank Page Skipping** and **Chunked Block Streaming**, delivering significant speed gains over legacy 32-bit software (eXtreme Burner, Khazama) while ensuring 100% data fidelity.
+ENIT AVR Studio introduces **Smart Blank Page Skipping** and **Chunked Block Streaming**, delivering significant speed gains over legacy 32-bit AVR programmer software while ensuring 100% data fidelity.
 
-| Metric | Legacy eXtreme Burner | ENIT AVR Studio | Performance Gain |
+| Metric | Legacy 32-Bit Programmers | ENIT AVR Studio | Performance Gain |
 |:---|:---:|:---:|:---:|
 | **Flash Write Time (`myFirmware.hex`)** | ~256.0 seconds | **209.64 seconds** | **+18.1% Faster** (Saved 47s) |
 | **Blank Pages Handled** | 47 pages written blindly | **47 pages skipped safely** | **100% USB Traffic Saved** |

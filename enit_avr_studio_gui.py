@@ -825,6 +825,8 @@ class WorkerThread(QThread):
                 if success:
                     chip = self.prog.autodetect_chip()
                     fuses = self.prog.read_fuses()
+                    if "container" in self.kwargs and self.kwargs["container"] is not None:
+                        self.kwargs["container"]["fuses"] = fuses
                     self.finished_signal.emit(True, "Connected")
                 else:
                     self.finished_signal.emit(False, "Sync failed")
@@ -832,6 +834,9 @@ class WorkerThread(QThread):
             elif self.action == "read_signature":
                 sig = self.prog.read_signature()
                 chip = self.prog.autodetect_chip()
+                fuses = self.prog.read_fuses()
+                if "container" in self.kwargs and self.kwargs["container"] is not None:
+                    self.kwargs["container"]["fuses"] = fuses
                 self.finished_signal.emit(True, f"Target Signature: 0x{sig[0]:02X} 0x{sig[1]:02X} 0x{sig[2]:02X}")
 
             elif self.action == "erase":
@@ -1000,7 +1005,7 @@ class EnitAVRStudio(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("ENIT AVR Studio v1.0.1 - Professional Microcontroller Programmer Suite")
+        self.setWindowTitle("ENIT AVR Studio v1.0.2 - Professional Microcontroller Programmer Suite")
         self.resize(1180, 820)
         self.setStyleSheet(STYLE_SHEET)
 
@@ -1242,10 +1247,16 @@ class EnitAVRStudio(QMainWindow):
         tb.addWidget(btn_clear)
 
         tb.addStretch()
-        self.lbl_flash_info = QLabel("Flash: 32768 Bytes | Buffer: 0 Bytes Loaded")
+        self.lbl_flash_info = QLabel("Flash: 32768 Bytes | No file loaded")
         self.lbl_flash_info.setStyleSheet("color: #38bdf8; font-weight: bold;")
+        self.lbl_flash_info.setTextInteractionFlags(Qt.TextSelectableByMouse)
         tb.addWidget(self.lbl_flash_info)
         layout.addLayout(tb)
+
+        self.lbl_flash_path = QLabel("Loaded Flash File: (None)")
+        self.lbl_flash_path.setStyleSheet("color: #94a3b8; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; padding: 2px 4px; background-color: #0b0f19; border: 1px solid #1e293b; border-radius: 4px;")
+        self.lbl_flash_path.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        layout.addWidget(self.lbl_flash_path)
 
         self.tbl_flash = self._create_hex_table()
         layout.addWidget(self.tbl_flash)
@@ -1584,15 +1595,32 @@ class EnitAVRStudio(QMainWindow):
         buf.clear(0xFF)
         if buf is self.flash_buffer:
             self.loaded_flash_path = None
+            if hasattr(self, 'lbl_flash_path'):
+                self.lbl_flash_path.setText("Loaded Flash File: (None)")
+            self.setWindowTitle("ENIT AVR Studio v1.0.2 - Professional Microcontroller Programmer Suite")
         elif buf is self.eeprom_buffer:
             self.loaded_eeprom_path = None
         self._populate_table(tbl, buf.buffer)
         self.log("Buffer reset to 0xFF.")
 
+    def _apply_fuses_to_ui(self, f: Dict[str, int]):
+        if not f:
+            return
+        self.edit_lfuse.setText(f"{f['low']:02X}")
+        self.edit_hfuse.setText(f"{f['high']:02X}")
+        self.edit_efuse.setText(f"{f['ext']:02X}")
+        self.edit_lock.setText(f"{f['lock']:02X}")
+        self.edit_calib.setText(f"{f['calib']:02X}")
+        self.edit_calib.setToolTip(f"Factory RC Oscillator Calibration Byte: 0x{f['calib']:02X} (Read-Only in AVR Silicon)")
+
     # Hardware Actions
     def on_connect_clicked(self):
         if self.programmer.handle is None:
-            self._run_worker("connect", "Connecting to target MCU...")
+            container = {}
+            def on_done(ok, msg):
+                if ok and "fuses" in container:
+                    self._apply_fuses_to_ui(container["fuses"])
+            self._run_worker("connect", "Connecting to target MCU...", container=container, custom_done=on_done)
         else:
             self.programmer.disconnect_target()
             self.programmer.close()
@@ -1604,7 +1632,11 @@ class EnitAVRStudio(QMainWindow):
                 self.lbl_hardware_summary.setText("DISCONNECTED • Click 'Connect USBasp' to initialize hardware session")
 
     def on_autodetect_clicked(self):
-        self._run_worker("read_signature", "Reading signature & detecting chip...")
+        container = {}
+        def on_done(ok, msg):
+            if ok and "fuses" in container:
+                self._apply_fuses_to_ui(container["fuses"])
+        self._run_worker("read_signature", "Reading signature & detecting chip...", container=container, custom_done=on_done)
 
     def on_speed_changed(self, text: str):
         code = SCK_SPEEDS.get(text, 0)
@@ -1839,7 +1871,10 @@ class EnitAVRStudio(QMainWindow):
                 cnt, highest = self.flash_buffer.load_hex_file(path)
                 self.loaded_flash_path = path
                 self._populate_table(self.tbl_flash, self.flash_buffer.buffer)
-                self.lbl_flash_info.setText(f"Loaded: {cnt} Bytes (Max Addr: 0x{highest:04X}) | File: {os.path.basename(path)}")
+                self.lbl_flash_info.setText(f"Loaded: {cnt} Bytes (Max Addr: 0x{highest:04X})")
+                self.lbl_flash_path.setText(f"Loaded Flash File: {path}")
+                self.lbl_flash_path.setToolTip(path)
+                self.setWindowTitle(f"ENIT AVR Studio v1.0.2 - [{path}]")
                 self.log(f"Successfully loaded {cnt} bytes into Flash buffer from {path}")
             except Exception as ex:
                 QMessageBox.critical(self, "HEX Parse Error", str(ex))
@@ -1857,12 +1892,15 @@ class EnitAVRStudio(QMainWindow):
         path, _ = QFileDialog.getOpenFileName(self, "Open EEPROM File", "", "EEPROM (*.eep *.hex *.bin);;All Files (*.*)")
         if path:
             try:
+                self.eeprom_buffer.clear(0xFF)
                 if path.lower().endswith('.bin'):
                     cnt = self.eeprom_buffer.load_binary_file(path)
                 else:
                     cnt, _ = self.eeprom_buffer.load_hex_file(path)
+                self.loaded_eeprom_path = path
                 self._populate_table(self.tbl_eeprom, self.eeprom_buffer.buffer)
-                self.lbl_eeprom_info.setText(f"Loaded: {cnt} Bytes | File: {os.path.basename(path)}")
+                self.lbl_eeprom_info.setText(f"Loaded: {cnt} Bytes | File: {path}")
+                self.lbl_eeprom_info.setToolTip(path)
                 self.log(f"Successfully loaded {cnt} bytes into EEPROM buffer from {path}")
             except Exception as ex:
                 QMessageBox.critical(self, "File Load Error", str(ex))

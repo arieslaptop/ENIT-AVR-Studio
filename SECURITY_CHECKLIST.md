@@ -17,7 +17,7 @@ ENIT AVR Studio follows standard, legitimate Windows software engineering practi
 | **Code Obfuscation** | No entropy manipulation | Standard readable Python bytecode (`.pyc`) without anti-decompilation | &check; PASS |
 | **Process Injection** | No DLL injection / hook hijacking | Direct standard `ctypes.cdll.LoadLibrary` to official driver | &check; PASS |
 | **Registry Access** | No unauthorized persistent keys | Zero hidden registry modification; stores configs locally | &check; PASS |
-| **Driver Integrity** | Genuine signed driver binaries | Uses official WHQL-signed libusb-win32 driver from eXtreme Burner / libusb | &check; PASS |
+| **Driver Integrity** | Genuine signed driver binaries | Uses official WHQL-signed libusb-win32 driver via Zadig / libusb | &check; PASS |
 | **Input Validation** | Robust bounds checking | All hex inputs bounded to `00`..`FF`; HEX parser validates record checksums | &check; PASS |
 | **External Communication** | Local USB only | Zero unauthorized background network telemetries or phoning home | &check; PASS |
 
