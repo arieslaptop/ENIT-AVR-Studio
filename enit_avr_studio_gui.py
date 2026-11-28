@@ -769,7 +769,7 @@ class WorkerThread(QThread):
 
         self.log_signal.emit(f"[VERIFY] Reading back {label} ({chip_size} bytes) from ATmega chip...")
         actual = self.prog.read_flash(
-            chip_size, page_size,
+            chip_size, 200,
             progress_callback=lambda c, t: self.progress_signal.emit(c, t),
             telemetry_callback=lambda telem: self.telemetry_signal.emit({
                 **telem,
@@ -847,7 +847,7 @@ class WorkerThread(QThread):
                 size = self.kwargs["size"]
                 page = self.kwargs.get("page_size", 128)
                 data = self.prog.read_flash(
-                    size, page,
+                    size, 200,
                     progress_callback=lambda c, t: self.progress_signal.emit(c, t),
                     telemetry_callback=lambda telem: self.telemetry_signal.emit(telem)
                 )
@@ -971,7 +971,7 @@ class WorkerThread(QThread):
 
                 self.log_signal.emit(f"[READ ALL - STEP 2/3] Reading Flash Memory ({chip.flash_size} bytes)...")
                 flash_data = self.prog.read_flash(
-                    chip.flash_size, chip.page_size,
+                    chip.flash_size, 200,
                     progress_callback=lambda c, t: self.progress_signal.emit(c, t),
                     telemetry_callback=lambda telem: self.telemetry_signal.emit(telem)
                 )

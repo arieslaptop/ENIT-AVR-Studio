@@ -166,6 +166,11 @@ class USBaspProgrammer:
                 if desc.idVendor == USBASP_VID and desc.idProduct == USBASP_PID:
                     self.handle = self.lib.usb_open(dev)
                     if self.handle:
+                        try:
+                            self.lib.usb_set_configuration(self.handle, 1)
+                            self.lib.usb_claim_interface(self.handle, 0)
+                        except Exception:
+                            pass
                         self.log("USBasp hardware detected and initialized.")
                         return True
                 dev = dev.contents.next
@@ -179,6 +184,10 @@ class USBaspProgrammer:
         if self.handle:
             if self.is_connected:
                 self.disconnect_target()
+            try:
+                self.lib.usb_release_interface(self.handle, 0)
+            except Exception:
+                pass
             self.lib.usb_close(self.handle)
             self.handle = None
             self.log("USBasp hardware session closed.")
@@ -343,7 +352,7 @@ class USBaspProgrammer:
         return match
 
     # High-Performance Flash Memory Read / Write with Telemetry
-    def read_flash(self, total_size: int, block_size: int = 128,
+    def read_flash(self, total_size: int, block_size: int = 200,
                    progress_callback: Optional[Callable[[int, int], None]] = None,
                    telemetry_callback: Optional[Callable[[Dict], None]] = None) -> bytes:
         """Reads target Flash memory block by block with live telemetry."""
@@ -458,32 +467,8 @@ class USBaspProgrammer:
             time.sleep(0.005)  # 5ms pacing for V-USB USBasp stability
             res = self.lib.usb_control_msg(
                 self.handle, 0x40, USBASP_FUNC_WRITEFLASH,
-                addr & 0xFFFF, wIndex, tx_buf, page_size, 5000
+                addr & 0xFFFF, wIndex, tx_buf, page_size, 10000
             )
-            if res < 0:
-                # Safe recovery check: read back page to see if USBasp wrote it before USB ACK failed
-                self.log(f"WARNING: USB write hiccup at page {p} (0x{addr:06X}, err={res}), verifying chip state...")
-                time.sleep(0.05)
-                rx_chk = (ctypes.c_char * page_size)()
-                chk_res = self.lib.usb_control_msg(
-                    self.handle, 0xC0, USBASP_FUNC_READFLASH,
-                    addr & 0xFFFF, 0, rx_chk, page_size, 5000
-                )
-                if chk_res == page_size and any(b != 0xFF for b in chunk):
-                    if rx_chk.raw[:page_size] == bytes(chunk):
-                        self.log(f"Page {p} verified already written on chip; continuing.")
-                        res = page_size
-                    elif all(b == 0xFF for b in rx_chk.raw[:page_size]):
-                        self.log(f"Page {p} was not written yet; retrying safely...")
-                        res = self.lib.usb_control_msg(
-                            self.handle, 0x40, USBASP_FUNC_WRITEFLASH,
-                            addr & 0xFFFF, wIndex, tx_buf, page_size, 5000
-                        )
-                elif chk_res == page_size and all(b == 0xFF for b in chunk) and all(b == 0xFF for b in rx_chk.raw[:page_size]):
-                    # Blank gap page already 0xFF on chip
-                    self.log(f"Blank page {p} (0x{addr:06X}) confirmed 0xFF; continuing.")
-                    res = page_size
-
             if res < 0:
                 self.log(f"ERROR: Flash write failed at page {p} (address 0x{addr:06X}, err={res})")
                 return False
